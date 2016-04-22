@@ -6,16 +6,11 @@ import UIKit
 public typealias SystemViewControllerLevel = Int
 public let SystemViewControllerLevelTop = Int.max
 
-/// Each System view controller should conform to this protocolc
-public protocol SystemViewController {
-  /// Level at which view controller should appear
-  var viewControllerLevel: SystemViewControllerLevel { get }
-}
-
 /// Use to place a System view controller above everthing else in app, even status bar and notifications.
 ///
 /// An example of such System view controller is `Update Required` screen.
-public final class SystemWindowController {
+@objc
+public final class SystemWindowController: NSObject {
   /// Private init so that we can only have one `SystemWindowController`. Use SystemWindowController constant
   private let windowLevel: UIWindowLevel
   public init(windowLevel: UIWindowLevel) {
@@ -50,10 +45,10 @@ public extension SystemWindowController {
    
    - parameter viewController: a view controller to present
    */
-  public func showSystemViewController<T: UIViewController where T: SystemViewController>(viewController: T) {
+  public func showSystemViewController(viewController: UIViewController, atLevel level: SystemViewControllerLevel) {
     if !window.keyWindow { showSystemWindow() }
     
-    self.viewController.showSystemViewController(viewController)
+    self.viewController.showSystemViewController(viewController, atLevel: level)
   }
   
   /**
@@ -61,7 +56,7 @@ public extension SystemWindowController {
    
    - parameter viewController: a view controller to dismiss
    */
-  public func dismissSystemViewController<T: UIViewController where T: SystemViewController>(viewController: T) {
+  public func dismissSystemViewController(viewController: UIViewController, atLevel level: SystemViewControllerLevel) {
     self.viewController.dismissSystemViewController(viewController)
     
     if !self.viewController.hasShownSystemViewControllers {
@@ -97,12 +92,10 @@ private final class SystemWindowViewController: UIViewController {
   private var onEmptyViewControllers: (() -> ())!
   
   /// Present `viewController` taking into account it's level
-  func showSystemViewController<T: UIViewController where T: SystemViewController>(viewController: T) {
-    print(viewController.debugDescription)
-    print(viewController.modalPresentationStyle.rawValue)
+  func showSystemViewController(viewController: UIViewController, atLevel level: SystemViewControllerLevel) {
     if viewController.modalPresentationStyle == .FullScreen {
       addChildViewController(viewController)
-      insertView(viewController.view, atLevel: viewController.viewControllerLevel)
+      insertView(viewController.view, atLevel: level)
       viewController.didMoveToParentViewController(self)
     }
     else {
@@ -111,7 +104,7 @@ private final class SystemWindowViewController: UIViewController {
   }
   
   /// Dismiss `viewController`
-  func dismissSystemViewController<T: UIViewController where T: SystemViewController>(viewController: T) {
+  func dismissSystemViewController(viewController: UIViewController) {
     if viewController.modalPresentationStyle == .FullScreen {
       viewController.willMoveToParentViewController(nil)
       removeView(viewController.view)
