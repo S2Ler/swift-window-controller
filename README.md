@@ -8,13 +8,13 @@
 ## Library Goal
 Provide a way to show global view controller with custom window management.
 
-## Usage
+## Example usage:
 
-Take a look on example project: [Example](Example/SystemWindowController/ViewController.swift)
-
-### Example usage:
-
-TBD
+```swift
+private let sysWindowController = SystemWindowController(windowLevel: UIWindowLevelAlert + 1)
+let viewController: UIViewController
+sysWindowController.showSystemViewController(viewController, atLevel: 0)
+```
 
 ## Requirements
 - CocoaPods 1.0
