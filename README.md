@@ -1,8 +1,8 @@
 # SystemWindowController
 [![Swift](https://img.shields.io/badge/Swift-2.2-orange.svg)]()
-[![Version](https://img.shields.io/cocoapods/v/DSLibCore.svg?style=flat)](http://cocoapods.org/pods/DSLibCore)
-[![License](https://img.shields.io/cocoapods/l/DSLibCore.svg?style=flat)](http://cocoapods.org/pods/DSLibCore)
-[![Platform](https://img.shields.io/cocoapods/p/DSLibCore.svg?style=flat)](http://cocoapods.org/pods/DSLibCore)
+[![Version](https://img.shields.io/cocoapods/v/SystemWindowController.svg?style=flat)](http://cocoapods.org/pods/SystemWindowController)
+[![License](https://img.shields.io/cocoapods/l/SystemWindowController.svg?style=flat)](http://cocoapods.org/pods/SystemWindowController)
+[![Platform](https://img.shields.io/cocoapods/p/SystemWindowController.svg?style=flat)](http://cocoapods.org/pods/SystemWindowController)
 
 ## Library Goal
 Provide a way to show global view controller with custom window management.
