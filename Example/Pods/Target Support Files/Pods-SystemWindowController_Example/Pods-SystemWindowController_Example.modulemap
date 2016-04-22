@@ -1,0 +1,6 @@
+framework module Pods_SystemWindowController_Example {
+  umbrella header "Pods-SystemWindowController_Example-umbrella.h"
+
+  export *
+  module * { export * }
+}

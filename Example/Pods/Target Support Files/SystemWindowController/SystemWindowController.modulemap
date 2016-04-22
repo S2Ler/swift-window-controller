@@ -1,0 +1,6 @@
+framework module SystemWindowController {
+  umbrella header "SystemWindowController-umbrella.h"
+
+  export *
+  module * { export * }
+}

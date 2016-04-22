@@ -1,0 +1,16 @@
+PODS:
+  - SystemWindowController (0.1.0)
+
+DEPENDENCIES:
+  - SystemWindowController (from `../`)
+
+EXTERNAL SOURCES:
+  SystemWindowController:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  SystemWindowController: 4b0c38c48ad59750d9b7218e82a780a758ffa41d
+
+PODFILE CHECKSUM: a6be465d041eb9119c7651b273e1ca4f5b21061a
+
+COCOAPODS: 1.0.0.beta.8

@@ -1,0 +1,9 @@
+use_frameworks!
+
+target 'SystemWindowController_Example' do
+  pod 'SystemWindowController', :path => '../'
+end
+
+target 'SystemWindowController_Tests' do
+  pod 'SystemWindowController', :path => '../'
+end
