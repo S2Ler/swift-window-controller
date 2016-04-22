@@ -1,0 +1,6 @@
+#### 0.2.0
+- Objective C support
+- Public API changed. Now there is no need to conform to protocol for presented view controllers
+
+#### 0.1.0
+- Initial Release
