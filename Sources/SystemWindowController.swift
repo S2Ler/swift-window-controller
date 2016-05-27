@@ -48,7 +48,8 @@ public extension SystemWindowController {
   public func showSystemViewController(viewController: UIViewController, atLevel level: SystemViewControllerLevel) {
     if !window.keyWindow { showSystemWindow() }
     
-    self.viewController.showSystemViewController(viewController, atLevel: level)
+    self.viewController.showSystemViewController(viewController,
+                                                 atLevel: level, statusBarState: previousKeyWindowStatusBarState)
   }
   
   /**
@@ -62,6 +63,10 @@ public extension SystemWindowController {
     if !self.viewController.hasShownSystemViewControllers {
       hideSystemWindow()
     }
+  }
+  
+  private var previousKeyWindowStatusBarState: StatusBarState {
+    return previousKeyWindow?.currentStatusBarState ?? StatusBarState.defaultStatusBar
   }
 }
 
@@ -90,9 +95,18 @@ private final class SystemWindowViewController: UIViewController {
   /// A map from viewController's view hash to it's level
   private var viewHashToLevelMap: [Hash: SystemViewControllerLevel] = [:]
   private var onEmptyViewControllers: (() -> ())!
+  private var statusBarState: StatusBarState? {
+    didSet {
+      setNeedsStatusBarAppearanceUpdate()
+    }
+  }
   
   /// Present `viewController` taking into account it's level
-  func showSystemViewController(viewController: UIViewController, atLevel level: SystemViewControllerLevel) {
+  func showSystemViewController(viewController: UIViewController,
+                                atLevel level: SystemViewControllerLevel,
+                                        statusBarState: StatusBarState) {
+    self.statusBarState = statusBarState
+    
     if viewController.modalPresentationStyle == .FullScreen {
       addChildViewController(viewController)
       insertView(viewController.view, atLevel: level)
@@ -182,6 +196,10 @@ private final class SystemWindowViewController: UIViewController {
     super.viewDidLoad()
     view.backgroundColor = UIColor.clearColor()
   }
+  
+  private override func prefersStatusBarHidden() -> Bool {
+    return statusBarState?.hidden ?? false
+  }
 }
 
 private extension SequenceType {
@@ -204,5 +222,39 @@ private extension SequenceType {
     }
     
     return nil
+  }
+}
+
+private struct StatusBarState {
+  let hidden: Bool
+  let style: UIStatusBarStyle
+  
+  static var defaultStatusBar: StatusBarState {
+    return StatusBarState(hidden: false, style: .LightContent)
+  }
+}
+
+private extension UIWindow {
+  var currentStatusBarState: StatusBarState {
+    if let rootViewController = self.rootViewController {
+      let topMostViewController = rootViewController.findTopMostController()
+      let viewControllerForStatusBarHidden = topMostViewController.childViewControllerForStatusBarHidden() ?? topMostViewController
+      let viewControllerForStatusBarStyle = topMostViewController.childViewControllerForStatusBarStyle() ?? topMostViewController
+      return StatusBarState(hidden: viewControllerForStatusBarHidden.prefersStatusBarHidden(),
+                            style: viewControllerForStatusBarStyle.preferredStatusBarStyle())
+    }
+    else {
+      return StatusBarState.defaultStatusBar
+    }
+  }
+}
+
+private extension UIViewController {
+  func findTopMostController() -> UIViewController {
+    var topController: UIViewController = self
+    while let presentedViewController = topController.presentedViewController {
+      topController = presentedViewController
+    }
+    return topController
   }
 }
