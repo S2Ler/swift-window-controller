@@ -3,6 +3,7 @@
 [![Version](https://img.shields.io/cocoapods/v/SystemWindowController.svg?style=flat)](http://cocoapods.org/pods/SystemWindowController)
 [![License](https://img.shields.io/cocoapods/l/SystemWindowController.svg?style=flat)](http://cocoapods.org/pods/SystemWindowController)
 [![Platform](https://img.shields.io/cocoapods/p/SystemWindowController.svg?style=flat)](http://cocoapods.org/pods/SystemWindowController)
+[![Build Status](https://travis-ci.org/diejmon/SystemWindowController.svg?branch=master)](https://travis-ci.org/diejmon/SystemWindowController)
 [![codebeat badge](https://codebeat.co/badges/8a24a4ed-c8b5-4551-8230-a7db6acde319)](https://codebeat.co/projects/github-com-diejmon-systemwindowcontroller)
 
 ## Library Goal
@@ -44,4 +45,3 @@ Alexander Belyavskiy diejmon@gmail.com
 ## License
 
 MIT
-
