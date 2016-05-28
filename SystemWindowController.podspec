@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = "SystemWindowController"
-  s.version          = "0.2.1"
+  s.version          = "0.3.0"
   s.summary          = "iOS Window Controller"
   s.description      = <<-DESC
 A controller to manage additional windows where you can pressent view controllers independent from main app.
