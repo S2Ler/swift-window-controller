@@ -200,6 +200,10 @@ private final class SystemWindowViewController: UIViewController {
   private override func prefersStatusBarHidden() -> Bool {
     return statusBarState?.hidden ?? false
   }
+  
+  private override func preferredStatusBarStyle() -> UIStatusBarStyle {
+    return statusBarState?.style ?? .LightContent
+  }
 }
 
 private extension SequenceType {
