@@ -20,6 +20,7 @@ public final class SystemWindowController: NSObject {
   /// Window which fly above all other windows in app.
   private lazy var window: UIWindow! = {
     let window = UIWindow()
+    window.accessibilityIdentifier = "System Window Controller"
     window.windowLevel = self.windowLevel
     window.backgroundColor = UIColor.clearColor()
     window.rootViewController = self.viewController
@@ -36,7 +37,7 @@ public final class SystemWindowController: NSObject {
   }()
   
   /// A window which was a key before `window` became key
-  weak var previousKeyWindow: UIWindow? = nil
+  weak var keyWindow: UIWindow? = nil
 }
 
 public extension SystemWindowController {
@@ -49,7 +50,7 @@ public extension SystemWindowController {
     if !window.keyWindow { showSystemWindow() }
     
     self.viewController.showSystemViewController(viewController,
-                                                 atLevel: level, statusBarState: previousKeyWindowStatusBarState)
+                                                 atLevel: level, statusBarState: keyWindowStatusBarState)
   }
   
   /**
@@ -57,7 +58,7 @@ public extension SystemWindowController {
    
    - parameter viewController: a view controller to dismiss
    */
-  public func dismissSystemViewController(viewController: UIViewController, atLevel level: SystemViewControllerLevel) {
+  public func dismissSystemViewController(viewController: UIViewController) {
     self.viewController.dismissSystemViewController(viewController)
     
     if !self.viewController.hasShownSystemViewControllers {
@@ -65,27 +66,24 @@ public extension SystemWindowController {
     }
   }
   
-  private var previousKeyWindowStatusBarState: StatusBarState {
-    return previousKeyWindow?.currentStatusBarState ?? StatusBarState.defaultStatusBar
+  private var keyWindowStatusBarState: StatusBarState {
+    return keyWindow?.currentStatusBarState ?? StatusBarState.defaultStatusBar
   }
 }
 
 private extension SystemWindowController {
   /// Make System window key and active
   private func showSystemWindow() {
-    previousKeyWindow = UIApplication.sharedApplication().keyWindow
-    previousKeyWindow?.endEditing(true)
+    keyWindow = UIApplication.sharedApplication().keyWindow
+    UIApplication.sharedApplication().keyWindow?.endEditing(true)
     window.frame = UIScreen.mainScreen().bounds
-    window.makeKeyAndVisible()
     window.hidden = false
   }
   
   /// Hide System window and show previously active window
   private func hideSystemWindow() {
-    previousKeyWindow?.makeKeyAndVisible()
     window.hidden = true
-    window = nil
-    previousKeyWindow = nil
+    keyWindow = nil
   }
 }
 
