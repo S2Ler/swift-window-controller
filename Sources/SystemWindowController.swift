@@ -76,7 +76,7 @@ private extension SystemWindowController {
   private func showSystemWindow() {
     keyWindow = UIApplication.sharedApplication().keyWindow
     UIApplication.sharedApplication().keyWindow?.endEditing(true)
-    window.frame = UIScreen.mainScreen().bounds
+    window.frame = keyWindow?.bounds ?? UIScreen.mainScreen().bounds
     window.hidden = false
   }
   
