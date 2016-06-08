@@ -1,3 +1,9 @@
+#### 0.4.0
+- Fix dismiss logic
+
+#### 0.3.0
+- Fix presentation logic
+
 #### 0.2.0
 - Objective C support
 - Public API changed. Now there is no need to conform to protocol for presented view controllers
