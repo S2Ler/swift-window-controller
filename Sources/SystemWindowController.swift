@@ -46,11 +46,14 @@ public extension SystemWindowController {
    
    - parameter viewController: a view controller to present
    */
-  public func showSystemViewController(viewController: UIViewController, atLevel level: SystemViewControllerLevel) {
+  public func showSystemViewController(viewController: UIViewController,
+                                       atLevel level: SystemViewControllerLevel,
+                                               completion: (Void -> Void)? = nil) {
     if !window.keyWindow { showSystemWindow() }
     
     self.viewController.showSystemViewController(viewController,
-                                                 atLevel: level, statusBarState: keyWindowStatusBarState)
+                                                 atLevel: level, statusBarState: keyWindowStatusBarState,
+                                                 completion: completion)
   }
   
   /**
@@ -58,12 +61,18 @@ public extension SystemWindowController {
    
    - parameter viewController: a view controller to dismiss
    */
-  public func dismissSystemViewController(viewController: UIViewController) {
-    self.viewController.dismissSystemViewController(viewController)
-    
-    if !self.viewController.hasShownSystemViewControllers {
-      hideSystemWindow()
-    }
+  public func dismissSystemViewController(viewController: UIViewController, completion: (Void -> Void)? = nil) {
+    self.viewController.dismissSystemViewController(viewController, completion: {[weak self] in
+      guard let this = self else {
+        completion?()
+        return
+      }
+      
+      if !this.viewController.hasShownSystemViewControllers {
+        this.hideSystemWindow()
+      }
+      completion?()
+    })
   }
   
   private var keyWindowStatusBarState: StatusBarState {
@@ -102,28 +111,31 @@ private final class SystemWindowViewController: UIViewController {
   /// Present `viewController` taking into account it's level
   func showSystemViewController(viewController: UIViewController,
                                 atLevel level: SystemViewControllerLevel,
-                                        statusBarState: StatusBarState) {
+                                        statusBarState: StatusBarState,
+                                        completion: (Void -> Void)?) {
     self.statusBarState = statusBarState
     
     if viewController.modalPresentationStyle == .FullScreen {
       addChildViewController(viewController)
       insertView(viewController.view, atLevel: level)
       viewController.didMoveToParentViewController(self)
+      completion?()
     }
     else {
-      findViewControllerForPresentation().presentViewController(viewController, animated: true, completion: nil)
+      findViewControllerForPresentation().presentViewController(viewController, animated: true, completion: completion)
     }
   }
   
   /// Dismiss `viewController`
-  func dismissSystemViewController(viewController: UIViewController) {
+  func dismissSystemViewController(viewController: UIViewController, completion: (Void -> Void)?) {
     if viewController.modalPresentationStyle == .FullScreen {
       viewController.willMoveToParentViewController(nil)
       removeView(viewController.view)
       viewController.removeFromParentViewController()
+      completion?()
     }
     else {
-      findViewControllerForPresentation().dismissViewControllerAnimated(true, completion: nil)
+      findViewControllerForPresentation().dismissViewControllerAnimated(true, completion: completion)
     }
   }
   
