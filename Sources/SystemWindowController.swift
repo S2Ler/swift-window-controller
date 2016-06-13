@@ -13,6 +13,7 @@ public let SystemViewControllerLevelTop = Int.max
 public final class SystemWindowController: NSObject {
   /// Private init so that we can only have one `SystemWindowController`. Use SystemWindowController constant
   private let windowLevel: UIWindowLevel
+  
   public init(windowLevel: UIWindowLevel) {
     self.windowLevel = windowLevel
   }
