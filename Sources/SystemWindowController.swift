@@ -23,7 +23,7 @@ public final class SystemWindowController: NSObject {
     let window = UIWindow()
     window.accessibilityIdentifier = "System Window Controller"
     window.windowLevel = self.windowLevel
-    window.backgroundColor = UIColor.clearColor()
+    window.backgroundColor = UIColor.clear
     window.rootViewController = self.viewController
     return window
   }()
@@ -47,14 +47,15 @@ public extension SystemWindowController {
    
    - parameter viewController: a view controller to present
    */
-  public func showSystemViewController(viewController: UIViewController,
-                                       atLevel level: SystemViewControllerLevel,
-                                               completion: (Void -> Void)? = nil) {
-    if !window.keyWindow { showSystemWindow() }
+  public func show(_ viewController: UIViewController,
+                   at level: SystemViewControllerLevel,
+                   completion: ((Void) -> Void)? = nil) {
+    if !window.isKeyWindow { showSystemWindow() }
     
-    self.viewController.showSystemViewController(viewController,
-                                                 atLevel: level, statusBarState: keyWindowStatusBarState,
-                                                 completion: completion)
+    self.viewController.show(viewController,
+                             at: level,
+                             statusBarState: keyWindowStatusBarState,
+                             completion: completion)
   }
   
   /**
@@ -62,7 +63,7 @@ public extension SystemWindowController {
    
    - parameter viewController: a view controller to dismiss
    */
-  public func dismissSystemViewController(viewController: UIViewController, completion: (Void -> Void)? = nil) {
+  public func dismissSystemViewController(_ viewController: UIViewController, completion: ((Void) -> Void)? = nil) {
     self.viewController.dismissSystemViewController(viewController, completion: {[weak self] in
       guard let this = self else {
         completion?()
@@ -84,15 +85,15 @@ public extension SystemWindowController {
 private extension SystemWindowController {
   /// Make System window key and active
   private func showSystemWindow() {
-    keyWindow = UIApplication.sharedApplication().keyWindow
-    UIApplication.sharedApplication().keyWindow?.endEditing(true)
-    window.frame = keyWindow?.bounds ?? UIScreen.mainScreen().bounds
-    window.hidden = false
+    keyWindow = UIApplication.shared.keyWindow
+    UIApplication.shared.keyWindow?.endEditing(true)
+    window.frame = keyWindow?.bounds ?? UIScreen.main.bounds
+    window.isHidden = false
   }
   
   /// Hide System window and show previously active window
   private func hideSystemWindow() {
-    window.hidden = true
+    window.isHidden = true
     keyWindow = nil
   }
 }
@@ -110,38 +111,38 @@ private final class SystemWindowViewController: UIViewController {
   }
   
   /// Present `viewController` taking into account it's level
-  func showSystemViewController(viewController: UIViewController,
-                                atLevel level: SystemViewControllerLevel,
-                                        statusBarState: StatusBarState,
-                                        completion: (Void -> Void)?) {
+  func show(_ viewController: UIViewController,
+            at level: SystemViewControllerLevel,
+            statusBarState: StatusBarState,
+            completion: ((Void) -> Void)?) {
     self.statusBarState = statusBarState
     
-    if viewController.modalPresentationStyle == .FullScreen {
+    if viewController.modalPresentationStyle == .fullScreen {
       addChildViewController(viewController)
       insertView(viewController.view, atLevel: level)
-      viewController.didMoveToParentViewController(self)
+      viewController.didMove(toParentViewController: self)
       completion?()
     }
     else {
-      findViewControllerForPresentation().presentViewController(viewController, animated: true, completion: completion)
+      findViewControllerForPresentation().present(viewController, animated: true, completion: completion)
     }
   }
   
   /// Dismiss `viewController`
-  func dismissSystemViewController(viewController: UIViewController, completion: (Void -> Void)?) {
-    if viewController.modalPresentationStyle == .FullScreen {
-      viewController.willMoveToParentViewController(nil)
+  func dismissSystemViewController(_ viewController: UIViewController, completion: ((Void) -> Void)?) {
+    if viewController.modalPresentationStyle == .fullScreen {
+      viewController.willMove(toParentViewController: nil)
       removeView(viewController.view)
       viewController.removeFromParentViewController()
       completion?()
     }
     else {
-      findViewControllerForPresentation().dismissViewControllerAnimated(true, completion: completion)
+      findViewControllerForPresentation().dismiss(animated: true, completion: completion)
     }
   }
   
-  override private func dismissViewControllerAnimated(flag: Bool, completion: (() -> Void)?) {
-    super.dismissViewControllerAnimated(flag, completion: { [weak self] in
+  override private func dismiss(animated flag: Bool, completion: (() -> Void)?) {
+    super.dismiss(animated: flag, completion: { [weak self] in
       completion?()
       
       guard let this = self else { return }
@@ -160,12 +161,12 @@ private final class SystemWindowViewController: UIViewController {
    - parameter viewToInsert: a view to insert into view hierarchy
    - parameter level:        a view's level
    */
-  private func insertView(viewToInsert: UIView, atLevel level: SystemViewControllerLevel) {
+  private func insertView(_ viewToInsert: UIView, atLevel level: SystemViewControllerLevel) {
     viewHashToLevelMap[viewToInsert.hashValue] = level
     
     //Find the last view hash which is at the same or less level
     let placeAboveTheViewWithHash = viewHashToLevelMap
-      .sort { (level1, level2) -> Bool in
+      .sorted { (level1, level2) -> Bool in
         return level1.1 < level2.1
       }
       .lastThat { $0.1 <= level }?.0
@@ -185,8 +186,8 @@ private final class SystemWindowViewController: UIViewController {
   }
   
   /// Remove `viewToRemove` from view hierarchy
-  private func removeView(viewToRemove: UIView) {
-    viewHashToLevelMap.removeValueForKey(viewToRemove.hashValue)
+  private func removeView(_ viewToRemove: UIView) {
+    viewHashToLevelMap.removeValue(forKey: viewToRemove.hashValue)
     viewToRemove.removeFromSuperview()
   }
   
@@ -205,21 +206,21 @@ private final class SystemWindowViewController: UIViewController {
   
   private override func viewDidLoad() {
     super.viewDidLoad()
-    view.backgroundColor = UIColor.clearColor()
+    view.backgroundColor = UIColor.clear
   }
   
-  private override func prefersStatusBarHidden() -> Bool {
+  private override var prefersStatusBarHidden: Bool {
     return statusBarState?.hidden ?? false
   }
   
-  private override func preferredStatusBarStyle() -> UIStatusBarStyle {
-    return statusBarState?.style ?? .LightContent
+  private override var preferredStatusBarStyle: UIStatusBarStyle {
+    return statusBarState?.style ?? .lightContent
   }
 }
 
-private extension SequenceType {
-  private func lastThat(@noescape predicate: (Generator.Element) -> Bool) -> Generator.Element? {
-    var last: Generator.Element? = nil
+private extension Sequence {
+  private func lastThat(_ predicate: @noescape (Iterator.Element) -> Bool) -> Iterator.Element? {
+    var last: Iterator.Element? = nil
     for element in self {
       if predicate(element) {
         last = element
@@ -229,7 +230,7 @@ private extension SequenceType {
     return last
   }
   
-  private func firstThat(@noescape predicate: (Generator.Element) -> Bool) -> Generator.Element? {
+  private func firstThat(_ predicate: @noescape (Iterator.Element) -> Bool) -> Iterator.Element? {
     for element in self {
       if predicate(element) {
         return element
@@ -245,7 +246,7 @@ private struct StatusBarState {
   let style: UIStatusBarStyle
   
   static var defaultStatusBar: StatusBarState {
-    return StatusBarState(hidden: false, style: .LightContent)
+    return StatusBarState(hidden: false, style: .lightContent)
   }
 }
 
@@ -253,10 +254,10 @@ private extension UIWindow {
   var currentStatusBarState: StatusBarState {
     if let rootViewController = self.rootViewController {
       let topMostViewController = rootViewController.findTopMostController()
-      let viewControllerForStatusBarHidden = topMostViewController.childViewControllerForStatusBarHidden() ?? topMostViewController
-      let viewControllerForStatusBarStyle = topMostViewController.childViewControllerForStatusBarStyle() ?? topMostViewController
-      return StatusBarState(hidden: viewControllerForStatusBarHidden.prefersStatusBarHidden(),
-                            style: viewControllerForStatusBarStyle.preferredStatusBarStyle())
+      let viewControllerForStatusBarHidden = topMostViewController.childViewControllerForStatusBarHidden ?? topMostViewController
+      let viewControllerForStatusBarStyle = topMostViewController.childViewControllerForStatusBarStyle ?? topMostViewController
+      return StatusBarState(hidden: viewControllerForStatusBarHidden.prefersStatusBarHidden,
+                            style: viewControllerForStatusBarStyle.preferredStatusBarStyle)
     }
     else {
       return StatusBarState.defaultStatusBar

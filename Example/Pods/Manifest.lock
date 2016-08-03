@@ -1,5 +1,5 @@
 PODS:
-  - SystemWindowController (0.3.0)
+  - SystemWindowController (0.4.0)
 
 DEPENDENCIES:
   - SystemWindowController (from `../`)
@@ -9,8 +9,8 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  SystemWindowController: 406456298c6a7b1db1cc19fa9712b1c8cfee631d
+  SystemWindowController: 95f60a931e137c81eac5d3c5f255df04af77d1c2
 
 PODFILE CHECKSUM: a6be465d041eb9119c7651b273e1ca4f5b21061a
 
-COCOAPODS: 1.0.0
+COCOAPODS: 1.1.0.beta.1
