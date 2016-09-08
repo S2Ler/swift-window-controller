@@ -19,7 +19,7 @@ public final class SystemWindowController: NSObject {
   }
   
   /// Window which fly above all other windows in app.
-  private lazy var window: UIWindow! = {
+  fileprivate lazy var window: UIWindow! = {
     let window = UIWindow()
     window.accessibilityIdentifier = "System Window Controller"
     window.windowLevel = self.windowLevel
@@ -29,7 +29,7 @@ public final class SystemWindowController: NSObject {
   }()
   
   /// Root view controller for `window`
-  private lazy var viewController: SystemWindowViewController! = {
+  fileprivate lazy var viewController: SystemWindowViewController! = {
     let viewController = SystemWindowViewController()
     viewController.onEmptyViewControllers = { [weak self] in
       self?.hideSystemWindow()
@@ -82,9 +82,9 @@ public extension SystemWindowController {
   }
 }
 
-private extension SystemWindowController {
+fileprivate extension SystemWindowController {
   /// Make System window key and active
-  private func showSystemWindow() {
+  func showSystemWindow() {
     keyWindow = UIApplication.shared.keyWindow
     UIApplication.shared.keyWindow?.endEditing(true)
     window.frame = keyWindow?.bounds ?? UIScreen.main.bounds
@@ -92,7 +92,7 @@ private extension SystemWindowController {
   }
   
   /// Hide System window and show previously active window
-  private func hideSystemWindow() {
+  func hideSystemWindow() {
     window.isHidden = true
     keyWindow = nil
   }
@@ -103,7 +103,7 @@ private final class SystemWindowViewController: UIViewController {
   typealias Hash = Int
   /// A map from viewController's view hash to it's level
   private var viewHashToLevelMap: [Hash: SystemViewControllerLevel] = [:]
-  private var onEmptyViewControllers: (() -> ())!
+  fileprivate var onEmptyViewControllers: (() -> ())!
   private var statusBarState: StatusBarState? {
     didSet {
       setNeedsStatusBarAppearanceUpdate()
@@ -199,7 +199,7 @@ private final class SystemWindowViewController: UIViewController {
     return viewControllerForPresentation
   }
   
-  private var hasShownSystemViewControllers: Bool {
+  fileprivate var hasShownSystemViewControllers: Bool {
     return childViewControllers.count > 0 || presentedViewController != nil
   }
 
@@ -218,8 +218,8 @@ private final class SystemWindowViewController: UIViewController {
   }
 }
 
-private extension Sequence {
-  private func lastThat(_ predicate: @noescape (Iterator.Element) -> Bool) -> Iterator.Element? {
+fileprivate extension Sequence {
+  func lastThat(_ predicate: @noescape (Iterator.Element) -> Bool) -> Iterator.Element? {
     var last: Iterator.Element? = nil
     for element in self {
       if predicate(element) {
@@ -230,7 +230,7 @@ private extension Sequence {
     return last
   }
   
-  private func firstThat(_ predicate: @noescape (Iterator.Element) -> Bool) -> Iterator.Element? {
+  func firstThat(_ predicate: @noescape (Iterator.Element) -> Bool) -> Iterator.Element? {
     for element in self {
       if predicate(element) {
         return element
