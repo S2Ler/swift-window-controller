@@ -7,26 +7,26 @@ private let sysWindowController2 = SystemWindowController(windowLevel: UIWindowL
 private let sysWindowController3 = SystemWindowController(windowLevel: UIWindowLevelAlert + 3)
 
 class ViewController: UIViewController {
-  override func viewDidAppear(animated: Bool) {
-    self.view.backgroundColor = UIColor.grayColor()
+  override func viewDidAppear(_ animated: Bool) {
+    self.view.backgroundColor = UIColor.gray
     super.viewDidAppear(animated)
     
-    sysWindowController1.showSystemViewController(makeAlertController(title: "Title1"), atLevel: 0)
-    let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(1 * Double(NSEC_PER_SEC)))
-    dispatch_after(delayTime, dispatch_get_main_queue()) { [unowned self] in
-      sysWindowController2.showSystemViewController(self.makeAlertController(title: "Title2"), atLevel: 0)
-      dispatch_after(delayTime, dispatch_get_main_queue()) { 
-        let vc = UIViewController()
-        vc.view.backgroundColor = UIColor.redColor()
-        sysWindowController1.showSystemViewController(vc, atLevel: 1)
-      }
+    sysWindowController1.show(makeAlertController(title: "Title1"), at: 0)
+    let delayTime = DispatchTime.now() + Double(Int64(1 * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC)
+    DispatchQueue.main.asyncAfter(deadline: delayTime) { [unowned self] in
+      sysWindowController2.show(self.makeAlertController(title: "Title2"), at: 0)
+        DispatchQueue.main.asyncAfter(deadline: delayTime) {
+            let vc = UIViewController()
+            vc.view.backgroundColor = UIColor.red
+            sysWindowController1.show(vc, at: 1)
+        }
     }
     
   }
   
-  private func makeAlertController(title title: String) -> UIAlertController {
-    let alert = UIAlertController(title: title, message: nil, preferredStyle: .Alert)
-    alert.addAction(UIAlertAction(title: "OK", style: .Default, handler: nil))
+  private func makeAlertController(title: String) -> UIAlertController {
+    let alert = UIAlertController(title: title, message: nil, preferredStyle: .alert)
+    alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
     return alert;
   }
 }
