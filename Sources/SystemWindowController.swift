@@ -140,8 +140,8 @@ private final class SystemWindowViewController: UIViewController {
       findViewControllerForPresentation().dismiss(animated: true, completion: completion)
     }
   }
-  
-  override private func dismiss(animated flag: Bool, completion: (() -> Void)?) {
+
+  override fileprivate func dismiss(animated flag: Bool, completion: (() -> Void)?) {
     super.dismiss(animated: flag, completion: { [weak self] in
       completion?()
       
@@ -204,16 +204,16 @@ private final class SystemWindowViewController: UIViewController {
   }
 
   
-  private override func viewDidLoad() {
+  fileprivate override func viewDidLoad() {
     super.viewDidLoad()
     view.backgroundColor = UIColor.clear
   }
   
-  private override var prefersStatusBarHidden: Bool {
+  fileprivate override var prefersStatusBarHidden: Bool {
     return statusBarState?.hidden ?? false
   }
   
-  private override var preferredStatusBarStyle: UIStatusBarStyle {
+  fileprivate override var preferredStatusBarStyle: UIStatusBarStyle {
     return statusBarState?.style ?? .lightContent
   }
 }
