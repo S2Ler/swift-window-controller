@@ -184,6 +184,13 @@ private final class SystemWindowViewController: UIViewController {
       view.addSubview(viewToInsert)
     }
   }
+
+  fileprivate override func viewWillLayoutSubviews() {
+    super.viewWillLayoutSubviews()
+    for subview in view.subviews {
+      subview.frame = view.bounds
+    }
+  }
   
   /// Remove `viewToRemove` from view hierarchy
   private func removeView(_ viewToRemove: UIView) {
