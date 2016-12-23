@@ -27,6 +27,8 @@ public final class SystemWindowController: NSObject {
     window.rootViewController = self.viewController
     return window
   }()
+
+  public var isWindowHidden: Bool { return window.isHidden }
   
   /// Root view controller for `window`
   fileprivate lazy var viewController: SystemWindowViewController! = {
