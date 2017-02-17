@@ -228,7 +228,7 @@ private final class SystemWindowViewController: UIViewController {
 }
 
 fileprivate extension Sequence {
-  func lastThat(_ predicate: @noescape (Iterator.Element) -> Bool) -> Iterator.Element? {
+  func lastThat(_ predicate: (Iterator.Element) -> Bool) -> Iterator.Element? {
     var last: Iterator.Element? = nil
     for element in self {
       if predicate(element) {
@@ -239,7 +239,7 @@ fileprivate extension Sequence {
     return last
   }
   
-  func firstThat(_ predicate: @noescape (Iterator.Element) -> Bool) -> Iterator.Element? {
+  func firstThat(_ predicate: (Iterator.Element) -> Bool) -> Iterator.Element? {
     for element in self {
       if predicate(element) {
         return element

@@ -1,5 +1,5 @@
 # SystemWindowController
-[![Swift](https://img.shields.io/badge/Swift-2.2-orange.svg)]()
+[![Swift](https://img.shields.io/badge/Swift-3.0.1-orange.svg)]()
 [![Version](https://img.shields.io/cocoapods/v/SystemWindowController.svg?style=flat)](http://cocoapods.org/pods/SystemWindowController)
 [![License](https://img.shields.io/cocoapods/l/SystemWindowController.svg?style=flat)](http://cocoapods.org/pods/SystemWindowController)
 [![Platform](https://img.shields.io/cocoapods/p/SystemWindowController.svg?style=flat)](http://cocoapods.org/pods/SystemWindowController)
@@ -18,8 +18,8 @@ sysWindowController.showSystemViewController(viewController, atLevel: 0)
 ```
 
 ## Requirements
-- CocoaPods 1.0
-- Swift 2.2
+- CocoaPods 1.2
+- Swift 3.0.1
 
 ## Installation
 
