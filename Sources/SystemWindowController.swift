@@ -65,7 +65,17 @@ public extension SystemWindowController {
    
    - parameter viewController: a view controller to dismiss
    */
+  @available(*, deprecated, message: "Use `dismiss(_:completion:)`. This method will be removed soon.")
   public func dismissSystemViewController(_ viewController: UIViewController, completion: ((Void) -> Void)? = nil) {
+    dismiss(viewController, completion: completion)
+  }
+
+  /**
+   Dismiss System view controller
+   
+   - parameter viewController: a view controller to dismiss
+   */
+  public func dismiss(_ viewController: UIViewController, completion: ((Void) -> Void)? = nil) {
     self.viewController.dismissSystemViewController(viewController, completion: {[weak self] in
       guard let this = self else {
         completion?()
@@ -78,7 +88,7 @@ public extension SystemWindowController {
       completion?()
     })
   }
-  
+
   private var keyWindowStatusBarState: StatusBarState {
     return keyWindow?.currentStatusBarState ?? StatusBarState.defaultStatusBar
   }
