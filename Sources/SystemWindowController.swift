@@ -51,7 +51,7 @@ public extension SystemWindowController {
    */
   public func show(_ viewController: UIViewController,
                    at level: SystemViewControllerLevel,
-                   completion: ((Void) -> Void)? = nil) {
+                   completion: (() -> Void)? = nil) {
     if !window.isKeyWindow { showSystemWindow() }
     
     self.viewController.show(viewController,
@@ -66,7 +66,7 @@ public extension SystemWindowController {
    - parameter viewController: a view controller to dismiss
    */
   @available(*, deprecated, message: "Use `dismiss(_:completion:)`. This method will be removed soon.")
-  public func dismissSystemViewController(_ viewController: UIViewController, completion: ((Void) -> Void)? = nil) {
+  public func dismissSystemViewController(_ viewController: UIViewController, completion: (() -> Void)? = nil) {
     dismiss(viewController, completion: completion)
   }
 
@@ -75,7 +75,7 @@ public extension SystemWindowController {
    
    - parameter viewController: a view controller to dismiss
    */
-  public func dismiss(_ viewController: UIViewController, completion: ((Void) -> Void)? = nil) {
+  public func dismiss(_ viewController: UIViewController, completion: (() -> Void)? = nil) {
     self.viewController.dismissSystemViewController(viewController, completion: {[weak self] in
       guard let this = self else {
         completion?()
@@ -111,6 +111,7 @@ fileprivate extension SystemWindowController {
 }
 
 /// Root container view controller for System view controllers
+@objc(DSLSystemWindowViewController)
 private final class SystemWindowViewController: UIViewController {
   typealias Hash = Int
   /// A map from viewController's view hash to it's level
@@ -126,7 +127,7 @@ private final class SystemWindowViewController: UIViewController {
   func show(_ viewController: UIViewController,
             at level: SystemViewControllerLevel,
             statusBarState: StatusBarState,
-            completion: ((Void) -> Void)?) {
+            completion: (() -> Void)?) {
     self.statusBarState = statusBarState
     
     if viewController.modalPresentationStyle == .fullScreen {
@@ -141,7 +142,7 @@ private final class SystemWindowViewController: UIViewController {
   }
   
   /// Dismiss `viewController`
-  func dismissSystemViewController(_ viewController: UIViewController, completion: ((Void) -> Void)?) {
+  func dismissSystemViewController(_ viewController: UIViewController, completion: (() -> Void)?) {
     if viewController.modalPresentationStyle == .fullScreen {
       viewController.willMove(toParentViewController: nil)
       removeView(viewController.view)
