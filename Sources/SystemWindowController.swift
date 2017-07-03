@@ -13,8 +13,10 @@ public let SystemViewControllerLevelTop = Int.max
 public final class SystemWindowController: NSObject {
   /// Private init so that we can only have one `SystemWindowController`. Use SystemWindowController constant
   private let windowLevel: UIWindowLevel
+  private let applicationProvider: () -> UIApplication?
   
-  public init(windowLevel: UIWindowLevel) {
+  public init(windowLevel: UIWindowLevel, application: @escaping @autoclosure () -> UIApplication?) {
+    self.applicationProvider = application
     self.windowLevel = windowLevel
   }
   
@@ -97,8 +99,10 @@ public extension SystemWindowController {
 fileprivate extension SystemWindowController {
   /// Make System window key and active
   func showSystemWindow() {
-    keyWindow = UIApplication.shared.keyWindow
-    UIApplication.shared.keyWindow?.endEditing(true)
+    if let application = applicationProvider() {
+      keyWindow = application.keyWindow
+      application.keyWindow?.endEditing(true)
+    }
     window.frame = keyWindow?.bounds ?? UIScreen.main.bounds
     window.isHidden = false
   }
