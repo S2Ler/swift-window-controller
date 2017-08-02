@@ -36,9 +36,6 @@ SystemWindowController is available through [CocoaPods](http://cocoapods.org). T
 
   This way you will be able to change and update the library easily while developing.
 
-## TODO
-Read [this](TODO.md) for up to date TODO list.
-
 ## Author
 
 Alexander Belyavskiy diejmon@gmail.com

@@ -1,3 +1,13 @@
+#### 0.6.0
+- Rename dismissSystemViewController(_:completion:) to  dismiss(_:completion:)
+- Swift 4
+
+#### 0.5.0
+- Swift 3
+- API changed
+- Expose `isWindowHidden` property
+- Fix layout of view controllers presented with fullScreen modalPresentationStyle
+
 #### 0.4.0
 - Fix dismiss logic
 
