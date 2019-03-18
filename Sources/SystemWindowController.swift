@@ -11,11 +11,13 @@ public let SystemViewControllerLevelTop = Int.max
 /// An example of such System view controller is `Update Required` screen.
 @objc
 public final class SystemWindowController: NSObject {
+  public typealias ApplicationProvider = () -> UIApplication?
+
   /// Private init so that we can only have one `SystemWindowController`. Use SystemWindowController constant
-  private let windowLevel: UIWindowLevel
-  private let applicationProvider: () -> UIApplication?
+  private let windowLevel: UIWindow.Level
+  private let applicationProvider: ApplicationProvider
   
-  public init(windowLevel: UIWindowLevel, application: @escaping @autoclosure () -> UIApplication?) {
+  public init(windowLevel: UIWindow.Level, application: @escaping ApplicationProvider) {
     self.applicationProvider = application
     self.windowLevel = windowLevel
   }
@@ -51,7 +53,7 @@ public extension SystemWindowController {
    
    - parameter viewController: a view controller to present
    */
-  public func show(_ viewController: UIViewController,
+  func show(_ viewController: UIViewController,
                    at level: SystemViewControllerLevel,
                    completion: (() -> Void)? = nil) {
     if !window.isKeyWindow { showSystemWindow() }
@@ -68,7 +70,7 @@ public extension SystemWindowController {
    - parameter viewController: a view controller to dismiss
    */
   @available(*, deprecated, message: "Use `dismiss(_:completion:)`. This method will be removed soon.")
-  public func dismissSystemViewController(_ viewController: UIViewController, completion: (() -> Void)? = nil) {
+  func dismissSystemViewController(_ viewController: UIViewController, completion: (() -> Void)? = nil) {
     dismiss(viewController, completion: completion)
   }
 
@@ -77,7 +79,7 @@ public extension SystemWindowController {
    
    - parameter viewController: a view controller to dismiss
    */
-  public func dismiss(_ viewController: UIViewController, completion: (() -> Void)? = nil) {
+  func dismiss(_ viewController: UIViewController, completion: (() -> Void)? = nil) {
     self.viewController.dismissSystemViewController(viewController, completion: {[weak self] in
       guard let this = self else {
         completion?()
@@ -135,9 +137,9 @@ private final class SystemWindowViewController: UIViewController {
     self.statusBarState = statusBarState
     
     if viewController.modalPresentationStyle == .fullScreen {
-      addChildViewController(viewController)
+      addChild(viewController)
       insertView(viewController.view, atLevel: level)
-      viewController.didMove(toParentViewController: self)
+      viewController.didMove(toParent: self)
       completion?()
     }
     else {
@@ -148,9 +150,9 @@ private final class SystemWindowViewController: UIViewController {
   /// Dismiss `viewController`
   func dismissSystemViewController(_ viewController: UIViewController, completion: (() -> Void)?) {
     if viewController.modalPresentationStyle == .fullScreen {
-      viewController.willMove(toParentViewController: nil)
+      viewController.willMove(toParent: nil)
       removeView(viewController.view)
-      viewController.removeFromParentViewController()
+      viewController.removeFromParent()
       completion?()
     }
     else {
@@ -224,7 +226,7 @@ private final class SystemWindowViewController: UIViewController {
   }
   
   fileprivate var hasShownSystemViewControllers: Bool {
-    return childViewControllers.count > 0 || presentedViewController != nil
+    return children.count > 0 || presentedViewController != nil
   }
 
   
@@ -278,8 +280,8 @@ private extension UIWindow {
   var currentStatusBarState: StatusBarState {
     if let rootViewController = self.rootViewController {
       let topMostViewController = rootViewController.findTopMostController()
-      let viewControllerForStatusBarHidden = topMostViewController.childViewControllerForStatusBarHidden ?? topMostViewController
-      let viewControllerForStatusBarStyle = topMostViewController.childViewControllerForStatusBarStyle ?? topMostViewController
+      let viewControllerForStatusBarHidden = topMostViewController.childForStatusBarHidden ?? topMostViewController
+      let viewControllerForStatusBarStyle = topMostViewController.childForStatusBarStyle ?? topMostViewController
       return StatusBarState(hidden: viewControllerForStatusBarHidden.prefersStatusBarHidden,
                             style: viewControllerForStatusBarStyle.preferredStatusBarStyle)
     }
