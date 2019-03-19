@@ -125,7 +125,9 @@ private final class SystemWindowViewController: UIViewController {
   fileprivate var onEmptyViewControllers: (() -> ())!
   private var statusBarState: StatusBarState? {
     didSet {
+      #if os(iOS)
       setNeedsStatusBarAppearanceUpdate()
+      #endif
     }
   }
   
@@ -234,7 +236,8 @@ private final class SystemWindowViewController: UIViewController {
     super.viewDidLoad()
     view.backgroundColor = UIColor.clear
   }
-  
+
+  #if os(iOS)
   fileprivate override var prefersStatusBarHidden: Bool {
     return statusBarState?.hidden ?? false
   }
@@ -242,6 +245,7 @@ private final class SystemWindowViewController: UIViewController {
   fileprivate override var preferredStatusBarStyle: UIStatusBarStyle {
     return statusBarState?.style ?? .lightContent
   }
+  #endif
 }
 
 fileprivate extension Sequence {
@@ -267,9 +271,19 @@ fileprivate extension Sequence {
   }
 }
 
+#if os(tvOS)
+private enum SWCStatusBarStyle {
+  case lightContent
+}
+#endif
+
 private struct StatusBarState {
   let hidden: Bool
+  #if os(iOS)
   let style: UIStatusBarStyle
+  #else
+  let style: SWCStatusBarStyle
+  #endif
   
   static var defaultStatusBar: StatusBarState {
     return StatusBarState(hidden: false, style: .lightContent)
@@ -280,10 +294,15 @@ private extension UIWindow {
   var currentStatusBarState: StatusBarState {
     if let rootViewController = self.rootViewController {
       let topMostViewController = rootViewController.findTopMostController()
+      #if os(iOS)
       let viewControllerForStatusBarHidden = topMostViewController.childForStatusBarHidden ?? topMostViewController
       let viewControllerForStatusBarStyle = topMostViewController.childForStatusBarStyle ?? topMostViewController
       return StatusBarState(hidden: viewControllerForStatusBarHidden.prefersStatusBarHidden,
                             style: viewControllerForStatusBarStyle.preferredStatusBarStyle)
+      #else
+      return StatusBarState(hidden: true,
+                            style: .lightContent)
+      #endif
     }
     else {
       return StatusBarState.defaultStatusBar
