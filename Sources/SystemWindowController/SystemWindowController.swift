@@ -1,6 +1,10 @@
 
 import Foundation
+#if canImport(UIKit)
 import UIKit
+#else
+#error("UIKit only framework")
+#endif
 
 /// Level where System view controller should appear. A view controller with the highest Level will be on top of all other view controllers.
 public typealias SystemViewControllerLevel = Int
