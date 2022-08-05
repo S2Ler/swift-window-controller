@@ -3,21 +3,21 @@
 import PackageDescription
 
 let package = Package(
-  name: "SystemWindowController",
+  name: "swift-window-controller",
   platforms: [
-    .iOS(.v10)
+    .iOS(.v13)
   ],
   products: [
     .library(
-      name: "SystemWindowController",
-      targets: ["SystemWindowController"]
+      name: "WindowController",
+      targets: ["WindowController"]
     ),
   ],
   dependencies: [
   ],
   targets: [
     .target(
-      name: "SystemWindowController",
+      name: "WindowController",
       dependencies: []
     )
   ]
