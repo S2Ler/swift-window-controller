@@ -43,9 +43,14 @@ public final class WindowController {
   }
 
   /// Window which fly above all other windows in app.
-  fileprivate var window: UIWindow!
+  fileprivate var window: PassthroughWindow!
 
   public var isWindowHidden: Bool { return window.isHidden }
+  public var shouldPassthroughHits: Bool = false {
+    didSet {
+      window?.shouldPassthroughHits = shouldPassthroughHits
+    }
+  }
 
   /// Root view controller for `window`
   fileprivate lazy var viewController: WindowViewController! = {
@@ -119,11 +124,12 @@ extension WindowController {
       .filter { $0.activationState == .foregroundActive }
       .first
     guard let windowScene = windowScene as? UIWindowScene else { return }
-    window = UIWindow(windowScene: windowScene)
+    window = PassthroughWindow(windowScene: windowScene)
     window.accessibilityIdentifier = windowName
     window.windowLevel = windowLevel
     window.backgroundColor = .clear
     window.rootViewController = viewController
+    window.shouldPassthroughHits = shouldPassthroughHits
 
     keyWindow = windowScene.windows.first(where: { $0.isKeyWindow == true })
     _ = keyWindow?.endEditing(true)
@@ -330,5 +336,22 @@ extension UIViewController {
       topController = presentedViewController
     }
     return topController
+  }
+}
+
+private final class PassthroughWindow: UIWindow {
+  fileprivate var shouldPassthroughHits: Bool = false
+
+  override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
+    if shouldPassthroughHits {
+      if let hitView = super.hitTest(point, with: event),
+         hitView !== self.rootViewController!.view {
+        return hitView
+      }
+      else {
+        return nil
+      }
+    }
+    return super.hitTest(point, with: event)
   }
 }
